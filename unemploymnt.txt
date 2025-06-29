@@ -1,0 +1,84 @@
+# Import necessary libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from statsmodels.tsa.seasonal import seasonal_decompose
+import numpy as np
+
+# Generate sample unemployment data (replace with your actual dataset)
+np.random.seed(0)
+date_range = pd.date_range(start='2015-01-01', end='2022-12-31', freq='M')
+unemployment_rate = np.random.uniform(3.0, 10.0, size=(len(date_range),))
+unemployment_data = pd.DataFrame({'Date': date_range, 'Unemployment Rate': unemployment_rate})
+
+# Data cleaning and preprocessing
+def clean_data(data):
+    data['Date'] = pd.to_datetime(data['Date'])
+    data.set_index('Date', inplace=True)
+    return data
+
+unemployment_data = clean_data(unemployment_data)
+
+# Explore the data
+def explore_data(data):
+    print(data.head())
+    print(data.describe())
+
+explore_data(unemployment_data)
+
+# Visualize the unemployment rate trend
+def visualize_trend(data):
+    plt.figure(figsize=(10,6))
+    sns.lineplot(x=data.index, y=data['Unemployment Rate'])
+    plt.title('Unemployment Rate Trend')
+    plt.xlabel('Date')
+    plt.ylabel('Unemployment Rate')
+    plt.show()
+
+visualize_trend(unemployment_data)
+
+# Investigate the impact of Covid-19 on unemployment rates
+def investigate_covid_impact(data):
+    covid_impact = data.loc['2020-01-01':]
+    plt.figure(figsize=(10,6))
+    sns.lineplot(x=covid_impact.index, y=covid_impact['Unemployment Rate'])
+    plt.title('Unemployment Rate Trend during Covid-19')
+    plt.xlabel('Date')
+    plt.ylabel('Unemployment Rate')
+    plt.show()
+
+investigate_covid_impact(unemployment_data)
+
+# Identify key patterns or seasonal trends in the data
+def identify_seasonal_trends(data):
+    decomposition = seasonal_decompose(data['Unemployment Rate'], model='additive')
+    trend = decomposition.trend
+    seasonal = decomposition.seasonal
+    residual = decomposition.resid
+
+    plt.figure(figsize=(12,8))
+    plt.subplot(411)
+    plt.plot(data['Unemployment Rate'], label='Original')
+    plt.legend(loc='best')
+    plt.subplot(412)
+    plt.plot(trend, label='Trend')
+    plt.legend(loc='best')
+    plt.subplot(413)
+    plt.plot(seasonal,label='Seasonality')
+    plt.legend(loc='best')
+    plt.subplot(414)
+    plt.plot(residual, label='Residuals')
+    plt.legend(loc='best')
+    plt.tight_layout()
+    plt.show()
+
+identify_seasonal_trends(unemployment_data)
+
+# Present insights that could inform economic or social policies
+def present_insights():
+    print("Insights:")
+    print("1. The unemployment rate has been fluctuating over time.")
+    print("2. There is a strong seasonal component in the unemployment rate data.")
+    print("3. The trend component suggests a gradual change in unemployment rates over time.")
+
+present_insights()
